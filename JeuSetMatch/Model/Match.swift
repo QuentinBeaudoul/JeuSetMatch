@@ -36,14 +36,11 @@ class Match {
 
     // MARK: - Private Getters
     private func getWinner() -> Player? {
-        for (player, score) in scores {
-            if score == Match.maxNumberOfWonSets {
+        for (player, score) in scores where score == Match.maxNumberOfWonSets {
                 return player
-            }
         }
         return nil
     }
-    
     private func getScores() -> [Player: Int] {
         var scores = [Player.one: 0, Player.two: 0]
 
@@ -69,14 +66,19 @@ class Match {
         if currentSet.isOver {
             addNewSetToMatch()
         } else {
-            addNewGameToCurrentSet()
+            if currentSet.shouldGoToTieBreak {
+                addNewTieBreakGame()
+            } else {
+                addNewGameToCurrentSet()
+            }
         }
     }
-
+    private func addNewTieBreakGame() {
+        currentSet.games.append(TieBreakGame())
+    }
     private func addNewGameToCurrentSet() {
         currentSet.games.append(Game())
     }
-
     private func addNewSetToMatch() {
         sets.append(Set())
     }
